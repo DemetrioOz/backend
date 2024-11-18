@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Impress {
+  id      String       @id @default(uuid())
+  nome    String
+  setor   String
+  url     String
+  type    String
+  created DateTime     @default(now())
+  updated DateTime     @updatedAt
+  logs    ImpressLog[] @relation("ImpressLogs")
+}
+
+model ImpressLog {
+  id          String       @id @default(uuid())
+  impressId   String
+  impress     Impress      @relation("ImpressLogs", fields: [impressId], references: [id])
+  supplies    Supply[]     @relation("PrinterSupplies")
+  trays       Tray[]       @relation("PrinterTrays")
+  consumables Consumable[] @relation("PrinterConsumables")
+  created     DateTime     @default(now())
+  updated     DateTime     @updatedAt
+}
+
+model Supply {
+  id            String     @id @default(uuid())
+  name_supply   String
+  camada_supply String
+  capacity_PLR  String
+  printerId     String
+  printer       ImpressLog @relation("PrinterSupplies", fields: [printerId], references: [id])
+  created       DateTime   @default(now())
+  updated       DateTime   @updatedAt
+}
+
+model Tray {
+  id            String     @id @default(uuid())
+  name_tray     String
+  capacity_tray String
+  printerId     String
+  printer       ImpressLog @relation("PrinterTrays", fields: [printerId], references: [id])
+  created       DateTime   @default(now())
+  updated       DateTime   @updatedAt
+}
+
+model Consumable {
+  id            String     @id @default(uuid())
+  number_pages  String
+  pages_printed String
+  printerId     String
+  printer       ImpressLog @relation("PrinterConsumables", fields: [printerId], references: [id])
+  created       DateTime   @default(now())
+  updated       DateTime   @updatedAt
+}
+
+model User {
+  id         String     @id @default(uuid())
+  nome       String
+  email      String     @unique
+  password   String
+  permissao  String
+  Tickets    Tickets[]
+  Features   Features[]
+  created    DateTime   @default(now())
+  updated    DateTime   @updatedAt
+  deleted_at DateTime?
+}
+
+model Equipament {
+  id         String    @id @default(uuid())
+  tag        String    @unique
+  patrimonio String    @unique
+  modelo     String
+  Tickets    Tickets[]
+  created    DateTime  @default(now())
+  updated    DateTime  @updatedAt
+  deleted_at DateTime?
+}
+
+model Tickets {
+  id           String     @id @default(uuid())
+  numero       String     @unique
+  descricao    String
+  userId       String
+  status       String
+  user         User       @relation(fields: [userId], references: [id])
+  equipamentId String
+  equipament   Equipament @relation(fields: [equipamentId], references: [id])
+  created      DateTime   @default(now())
+  updated      DateTime   @updatedAt
+}
+
+model Features {
+  id         String    @id @default(uuid())
+  nome       String
+  descricao  String
+  status     String
+  programa   String
+  userId     String
+  user       User      @relation(fields: [userId], references: [id])
+  created    DateTime  @default(now())
+  updated    DateTime  @updatedAt
+  deleted_at DateTime?
+}
+
+model ErrorAplication {
+  id          String   @id @default(uuid())
+  mensagem    String
+  stackTrace  String?
+  origem      String
+  dataHora    DateTime @default(now())
+  resolvido   Boolean  @default(false)
+  observacoes String?
+  created     DateTime @default(now())
+  updated     DateTime @updatedAt
+}
