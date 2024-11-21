@@ -95,6 +95,7 @@ model Tickets {
   equipament   Equipament @relation(fields: [equipamentId], references: [id])
   created      DateTime   @default(now())
   updated      DateTime   @updatedAt
+  deleted_at   DateTime?
 }
 
 model Features {
