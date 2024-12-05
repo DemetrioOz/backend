@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { getTickets, postTicket } from "../../services/tickets";
-import { TicketType } from "../../types/ticketType";
 
 export const GET = async (req: Request, res: Response) => {
   try {
