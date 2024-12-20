@@ -8,9 +8,13 @@ import {
 } from "../../models/Equipament.model";
 import { EquipamentType } from "../../types/equipamentType";
 import { regex } from "../../regex";
+import { redis } from "../../database/redis";
 
 export const getEquipaments = async (): Promise<Equipament[]> => {
+  const cacheData = await redis.get("users");
+  if (cacheData) return JSON.parse(cacheData);
   const equipaments = await getAllEquipaments();
+  await redis.set("equipaments", JSON.stringify(equipaments), "EX", 80000);
   return equipaments as Equipament[];
 };
 
@@ -50,6 +54,7 @@ export const editEquipament = async (
 };
 
 export const excludeEquipament = async (id: string): Promise<Equipament> => {
-  await getEquipamentById(id);
+  const idGet = await getEquipamentById(id);
+  if (!idGet) throw new Error("Usuario não encontrado.");
   return await deleteEquipament(id);
 };

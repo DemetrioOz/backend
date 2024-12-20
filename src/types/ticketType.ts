@@ -1,7 +1,7 @@
 export type TicketType = {
   numero: string;
   descricao: string;
-  userId?: string | null;
+  userId: string;
   status: string;
-  equipamentId?: string | null;
+  equipamentId: string;
 };

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { editUser, getUsers, postUser } from "../../services/user";
+import { editUser, excludeUser, getUsers, postUser } from "../../services/user";
 
 export const GET = async (req: Request, res: Response) => {
   try {
@@ -7,7 +7,12 @@ export const GET = async (req: Request, res: Response) => {
     res.status(200).json(users);
     return;
   } catch (error) {
-    res.status(400).json(error);
+    if (error instanceof Error) {
+      console.log(error);
+      res.status(400).json({ erro: error.message });
+    } else {
+      res.status(400).json({ erro: "Erro desconhecido" });
+    }
     return;
   }
 };
@@ -20,19 +25,41 @@ export const CREATE = async (req: Request, res: Response) => {
     return;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      res.status(400).json(error.message);
+      console.log(error);
+      res.status(400).json({ erro: error.message });
     } else {
-      res.status(400).json("Erro desconhecido");
+      res.status(400).json({ erro: "Erro desconhecido" });
     }
     return;
   }
 };
 
 export const EDIT = async (req: Request, res: Response) => {
-  const { id, nome, email, password, permissao } = req.body();
-  await editUser({ id, nome, email, password, permissao });
   try {
+    const id = req.params.id;
+    const { nome, email, password, permissao } = req.body;
+    const user = await editUser({ id, nome, email, password, permissao });
+    res.status(200).json(user);
   } catch (error) {
-    res.status(200).json(error);
+    if (error instanceof Error) {
+      res.status(400).json({ erro: error.message });
+    } else {
+      res.status(400).json({ erro: "Erro desconhecido" });
+    }
+    return;
+  }
+};
+
+export const DELETE = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    await excludeUser(id);
+    res.status(200).json({ message: "sucess" });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(400).json({ erro: error.message });
+    } else {
+      res.status(400).json({ erro: "Erro desconhecido" });
+    }
   }
 };

@@ -30,9 +30,6 @@ export const createTicket = async ({
   status,
   equipamentId,
 }: TicketType) => {
-  if (userId === undefined || userId === null) userId = "void";
-  if (equipamentId === undefined || equipamentId === null)
-    equipamentId = "void";
   const ticket: Tickets = await prisma.tickets.create({
     data: {
       numero,

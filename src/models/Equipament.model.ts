@@ -15,16 +15,19 @@ export const getAllEquipaments = async () => {
   }
 };
 
-export const getEquipamentById = async (id: string): Promise<Equipament> => {
-  const equipament = await prisma.equipament.findUnique({
+export const getUserByData = async ({
+  field,
+  value,
+}: {
+  field: "id" | "tag" | "patrimonio" | "modelo";
+  value: string;
+}) => {
+  const user = await prisma.equipament.findFirst({
     where: {
-      id,
+      [field]: value,
     },
   });
-  if (!equipament) {
-    throw new Error("Equipamento não encontrado");
-  }
-  return equipament;
+  return user;
 };
 
 export const createEquipament = async ({

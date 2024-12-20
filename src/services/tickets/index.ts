@@ -6,9 +6,13 @@ import {
 } from "../../models/Ticket.model";
 import { TicketType } from "../../types/ticketType";
 import { regex } from "../../regex";
+import { redis } from "../../database/redis";
 
 export const getTickets = async (): Promise<Tickets[]> => {
+  const cacheData = await redis.get("tickets");
+  if (cacheData) return JSON.parse(cacheData);
   const tickets = await getAllTickets();
+  await redis.set("tickets", JSON.stringify(tickets), "EX", 80000);
   return tickets;
 };
 
@@ -27,7 +31,9 @@ export const postTicket = async ({
   if (
     regex("void", numero) ||
     regex("void", descricao) ||
-    regex("void", status)
+    regex("void", userId) ||
+    regex("void", status) ||
+    regex("void", equipamentId)
   )
     throw new Error("Por favor preencha corretamente");
   if (regex("tag", numero))

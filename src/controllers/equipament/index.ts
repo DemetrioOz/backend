@@ -12,7 +12,12 @@ export const GET = async (req: Request, res: Response) => {
     res.status(200).json(equipaments);
     return;
   } catch (error) {
-    res.status(400).json({ erro: "" });
+    if (error instanceof Error) {
+      console.log(error);
+      res.status(400).json({ erro: error.message });
+    } else {
+      res.status(400).json({ erro: "Erro desconhecido" });
+    }
     return;
   }
 };
