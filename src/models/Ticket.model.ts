@@ -11,10 +11,16 @@ export const getAllTickets = async (): Promise<Tickets[]> => {
   return tickets;
 };
 
-export const getTicketById = async (id: string): Promise<Tickets> => {
-  const ticket = await prisma.tickets.findUnique({
+export const getTicketByData = async ({
+  field,
+  value,
+}: {
+  field: "id" | "numero";
+  value: string;
+}): Promise<Tickets> => {
+  const ticket = await prisma.tickets.findFirst({
     where: {
-      id,
+      [field]: value,
     },
   });
   if (!ticket) {
@@ -42,6 +48,31 @@ export const createTicket = async ({
   return ticket;
 };
 
-export const updateTicket = async (body: string) => {};
+export const updateTicket = async (
+  id: string,
+  descricao: string,
+  status: string
+) => {
+  const updateTicket = await prisma.tickets.update({
+    where: {
+      id,
+    },
+    data: {
+      descricao,
+      status,
+    },
+  });
+  return updateTicket;
+};
 
-export const deleteTicket = async (id: string) => {};
+export const deleteTicket = async (id: string) => {
+  const deleteTicket = await prisma.tickets.update({
+    where: {
+      id,
+    },
+    data: {
+      deleted_at: new Date(),
+    },
+  });
+  return deleteTicket;
+};

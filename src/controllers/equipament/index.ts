@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {
   excludeEquipament,
+  getEquipament,
   getEquipaments,
   postEquipament,
 } from "../../services/equipaments";
@@ -17,6 +18,23 @@ export const GET = async (req: Request, res: Response) => {
       res.status(400).json({ erro: error.message });
     } else {
       res.status(400).json({ erro: "Erro desconhecido" });
+    }
+    return;
+  }
+};
+
+export const UNIQUE = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.body;
+    const equipament = await getEquipament(id);
+    res.status(200).json({ message: equipament });
+    return;
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Error) {
+      res.status(400).json({ erro: error.message });
+    } else {
+      res.status(400).json({ erro: "Ocorreu um erro desconhecido" });
     }
     return;
   }

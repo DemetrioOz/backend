@@ -15,7 +15,7 @@ export const getAllEquipaments = async () => {
   }
 };
 
-export const getUserByData = async ({
+export const getEquipamentByData = async ({
   field,
   value,
 }: {
@@ -49,7 +49,7 @@ export const updateEquipament = async (
   id: string,
   { tag, patrimonio, modelo }: EquipamentType
 ): Promise<Equipament> => {
-  const updateUser = await prisma.equipament.update({
+  const updateEquipament = await prisma.equipament.update({
     where: {
       id,
     },
@@ -59,7 +59,7 @@ export const updateEquipament = async (
       modelo,
     },
   });
-  return updateUser;
+  return updateEquipament;
 };
 
 export const deleteEquipament = async (id: string): Promise<Equipament> => {

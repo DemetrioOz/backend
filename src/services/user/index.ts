@@ -12,10 +12,21 @@ import { redis } from "../../database/redis";
 
 export const getUsers = async () => {
   const cacheData = await redis.get("users");
-  if (cacheData) return JSON.parse(cacheData);
+  if (cacheData) {
+    await redis.del("users");
+    return JSON.parse(cacheData);
+  }
   const users = await getAllUsers();
   await redis.set("users", JSON.stringify(users), "EX", 80000);
   return users;
+};
+
+export const getUser = async (id: string) => {
+  const cacheData = await redis.get(`user${id}`);
+  if (cacheData) return JSON.parse(cacheData);
+  const user = await getUserByData({ field: "id", value: id });
+  await redis.set(`user${id}`, JSON.stringify(user), "EX", 800000);
+  return user;
 };
 
 export const postUser = async ({
